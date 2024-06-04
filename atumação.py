@@ -44,11 +44,12 @@ def processar_produtos_na_pagina(page):
         page.select_option('select#finalidade', '2')
         print("Opção 'Venda' selecionada.")
 
-        # Adicionar uma pausa para visualização
+        # Adicionar uma pausa para garantir que a página esteja totalmente carregada
         time.sleep(2)
 
-        # Clicar no botão "Salvar Todos" para salvar todas as alterações
-        page.click('button#btn-confirm-edit')
+        # Aguardar até que o botão "Salvar Todos" esteja disponível para clique
+        salvar_todos_button = page.wait_for_selector('button#btn-confirm-edit', timeout=60000)
+        salvar_todos_button.click()
         print("Alterações salvas.")
 
         # Esperar pelo desaparecimento do modal swal
@@ -86,10 +87,20 @@ def processar_produtos(page):
         # Verificar se existe um botão para a próxima página
         next_page_link = page.query_selector('a.lipagina-btn-paginacao[title="Próxima Página"]')
         if next_page_link:
+            # Esperar pelo desaparecimento do modal swal
+            page.wait_for_selector('div.swal2-container', state='detached', timeout=60000)
+
+            # Adicionar uma pausa para garantir que a página esteja totalmente carregada
+            time.sleep(2)
+
+            # Verificar se o link da próxima página ainda está presente no DOM
+            next_page_link = page.query_selector('a.lipagina-btn-paginacao[title="Próxima Página"]')
+
             # Clicar no botão da próxima página
             with page.expect_navigation():
                 next_page_link.click()
             print("Indo para a próxima página...")
+
             # Adicionar uma pausa para a página carregar
             time.sleep(2)
         else:
