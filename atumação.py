@@ -73,7 +73,8 @@ def processar_produtos(page):
         page.click('a:has-text("Imóveis: Listar")')
 
     # Preencher o campo de pesquisa com "PS"
-    page.fill('input[name="pesquisa"]', 'PS')
+    page.click("select[name='ativos']")
+    page.select_option('select[name="ativos"]', value='S')
     page.press('input[name="pesquisa"]', 'Enter')
 
     # Esperar a página carregar completamente
